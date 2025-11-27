@@ -13,8 +13,8 @@ public interface BinarySearchTree<T extends Comparable<T>> {
     void delete(T data);
     
     // Traversals
-    void inorderTraversal();
-    void preorderTraversal();
+    void inOrderTraversal();
+    void preOrderTraversal();
     void postOrderTraversal();
     void levelOrderTraversal();
     
@@ -27,3 +27,4 @@ public interface BinarySearchTree<T extends Comparable<T>> {
     T min();
     T max();
 }
+
