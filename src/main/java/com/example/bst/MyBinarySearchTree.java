@@ -84,18 +84,83 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         return node;
     }
 
-    // === Traversal Methods (Part 3) for SALAM ===
+    // === Traversal Methods ===
+    @Override
+    public void inOrderTraversal() {
+        System.out.print("In-order: ");
+        inOrderRecursive(root);
+        System.out.println();
+    }
 
+    private void inOrderRecursive(TreeNode<T> node) {
+        if (node != null) {
+            inOrderRecursive(node.left);
+            System.out.print(node.data + " ");
+            inOrderRecursive(node.right);
+        }
+    }
 
+    @Override
+    public void preOrderTraversal() {
+        System.out.print("Pre-order: ");
+        preOrderRecursive(root);
+        System.out.println();
+    }
 
+    private void preOrderRecursive(TreeNode<T> node) {
+        if (node != null) {
+            System.out.print(node.data + " ");
+            preOrderRecursive(node.left);
+            preOrderRecursive(node.right);
+        }
+    }
 
+    @Override
+    public void postOrderTraversal() {
+        System.out.print("Post-order: ");
+        postOrderRecursive(root);
+        System.out.println();
+    }
 
+    private void postOrderRecursive(TreeNode<T> node) {
+        if (node != null) {
+            postOrderRecursive(node.left);
+            postOrderRecursive(node.right);
+            System.out.print(node.data + " ");
+        }
+    }
+
+    @Override
+    public void levelOrderTraversal() {
+        System.out.print("Level-order: ");
+        if (root == null) {
+            System.out.println();
+            return;
+        }
+
+        Queue<TreeNode<T>> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode<T> current = queue.poll();
+            System.out.print(current.data + " ");
+
+            if (current.left != null) {
+                queue.offer(current.left);
+            }
+            if (current.right != null) {
+                queue.offer(current.right);
+            }
+        }
+        System.out.println();
+    }
+    
     // === Tree Properties ===
     @Override
     public int height() {
         return heightRecursive(root);
     }
-    
+
     private int heightRecursive(TreeNode<T> node) {
         if (node == null) {
             return -1;
@@ -130,7 +195,7 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         }
         return findMax(root).data;
     }
-    
+
     private TreeNode<T> findMin(TreeNode<T> node) {
         while (node.left != null) {
             node = node.left;
@@ -138,14 +203,14 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         return node;
     }
 
-    
+
     private TreeNode<T> findMax(TreeNode<T> node) {
         while (node.right != null) {
             node = node.right;
         }
         return node;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -166,5 +231,3 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         }
     }
 }
-
-
