@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DoublyLinkedList.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab5-data-structures</a> &gt; <a href="index.source.html" class="el_package">com.example.dlist</a> &gt; <span class="el_source">DoublyLinkedList.java</span></div><h1>DoublyLinkedList.java</h1><pre class="source lang-java linenums">package com.example.dlist;
+
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
+/**
+ * A generic doubly linked list that uses head and tail sentinel nodes.
+ *
+ * @param &lt;T&gt; the type of elements stored in the list
+ */
+
+public final class DoublyLinkedList&lt;T&gt; implements DoublyLinkedListAPI&lt;T&gt; {
+
+    /**
+     * Doubly-linked node containing an element and references to previous and next nodes.
+     *
+     * @param &lt;T&gt; the type of element stored in this node
+     */
+    private static final class Node&lt;T&gt; {
+        T data;
+        DoublyLinkedList.Node&lt;T&gt; prev;
+        DoublyLinkedList.Node&lt;T&gt; next;
+
+        /**
+         * Constructs a new node with the specified data and links.
+         *
+         * @param data the element to store in this node
+         * @param prev reference to the previous node
+         * @param next reference to the next node
+         */
+<span class="fc" id="L31">        Node(T data, DoublyLinkedList.Node&lt;T&gt; prev, DoublyLinkedList.Node&lt;T&gt; next) {</span>
+<span class="fc" id="L32">            this.data = data;</span>
+<span class="fc" id="L33">            this.prev = prev;</span>
+<span class="fc" id="L34">            this.next = next;</span>
+<span class="fc" id="L35">        }</span>
+    }
+
+    private final DoublyLinkedList.Node&lt;T&gt; head; // sentinel head (does not store an element)
+    private final DoublyLinkedList.Node&lt;T&gt; tail; // sentinel tail (does not store an element)
+
+    private int size;
+    private int modCount; // for fail-fast iterators
+
+    /** Constructs an empty list with head/tail sentinels linked together. */
+<span class="fc" id="L45">    public DoublyLinkedList() {</span>
+<span class="fc" id="L46">        head = new DoublyLinkedList.Node&lt;&gt;(null, null, null);</span>
+<span class="fc" id="L47">        tail = new DoublyLinkedList.Node&lt;&gt;(null, null, null);</span>
+<span class="fc" id="L48">        head.next = tail;</span>
+<span class="fc" id="L49">        tail.prev = head;</span>
+<span class="fc" id="L50">        size = 0;</span>
+<span class="fc" id="L51">        modCount = 0;</span>
+<span class="fc" id="L52">    }</span>
+
+    // --------------- Add operations ---------------
+
+    /**
+     * Inserts the specified element at the beginning of this list.
+     *
+     * @param data the element to add
+     */
+    @Override
+    public void addFirst(T data) {
+<span class="fc" id="L63">        linkBetween(data, head, head.next);</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Appends the specified element to the end of this list.
+     *
+     * @param data the element to add
+     */
+    @Override
+    public void addLast(T data) {
+<span class="fc" id="L73">        linkBetween(data, tail.prev, tail);</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Inserts the specified element at the specified position in this list.
+     * Shifts the element currently at that position (if any) and any subsequent
+     * elements to the right (adds one to their indices).
+     *
+     * @param index index at which the specified element is to be inserted
+     * @param data element to be inserted
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index &lt; 0 || index &gt; size()})
+     */
+    @Override
+    public void insertAt(int index, T data) {
+<span class="fc" id="L88">        checkPositionIndex(index);</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (index == size) {</span>
+<span class="nc" id="L90">            linkBetween(data, tail.prev, tail);</span>
+        } else {
+<span class="fc" id="L92">            DoublyLinkedList.Node&lt;T&gt; target = nodeAt(index);</span>
+<span class="fc" id="L93">            linkBetween(data, target.prev, target);</span>
+        }
+<span class="fc" id="L95">    }</span>
+
+    // --------------- Remove operations ---------------
+
+    /**
+     * Removes and returns the first element from this list.
+     *
+     * @return the first element from this list
+     * @throws NoSuchElementException if this list is empty
+     */
+    @Override
+    public T removeFirst() {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (isEmpty()) throw new NoSuchElementException(&quot;List is empty&quot;);</span>
+<span class="fc" id="L108">        return unlink(head.next);</span>
+    }
+
+    /**
+     * Removes and returns the last element from this list.
+     *
+     * @return the last element from this list
+     * @throws NoSuchElementException if this list is empty
+     */
+    @Override
+    public T removeLast() {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (isEmpty()) throw new NoSuchElementException(&quot;List is empty&quot;);</span>
+<span class="fc" id="L120">        return unlink(tail.prev);</span>
+    }
+
+    /**
+     * Removes the element at the specified position in this list. Shifts any
+     * subsequent elements to the left (subtracts one from their indices).
+     * Returns the element that was removed from the list.
+     *
+     * @param index the index of the element to be removed
+     * @return the element previously at the specified position
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index &lt; 0 || index &gt;= size()})
+     */
+    @Override
+    public T removeAt(int index) {
+<span class="fc" id="L135">        checkElementIndex(index);</span>
+<span class="fc" id="L136">        return unlink(nodeAt(index));</span>
+    }
+
+    /**
+     * Removes all elements from this list. The list will be empty
+     * after this call returns.
+     */
+    @Override
+    public void clear() {
+        // Unlink all nodes to help GC
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        for (DoublyLinkedList.Node&lt;T&gt; x = head.next; x != tail; ) {</span>
+<span class="fc" id="L147">            DoublyLinkedList.Node&lt;T&gt; next = x.next;</span>
+<span class="fc" id="L148">            x.data = null;</span>
+<span class="fc" id="L149">            x.prev = null;</span>
+<span class="fc" id="L150">            x.next = null;</span>
+<span class="fc" id="L151">            x = next;</span>
+<span class="fc" id="L152">        }</span>
+<span class="fc" id="L153">        head.next = tail;</span>
+<span class="fc" id="L154">        tail.prev = head;</span>
+<span class="fc" id="L155">        size = 0;</span>
+<span class="fc" id="L156">        modCount++;</span>
+<span class="fc" id="L157">    }</span>
+
+    // --------------- Element access ---------------
+
+    /**
+     * Returns the first element in this list.
+     *
+     * @return the first element in this list
+     * @throws NoSuchElementException if this list is empty
+     */
+    @Override
+    public T getFirst() {
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (isEmpty()) throw new NoSuchElementException(&quot;List is empty&quot;);</span>
+<span class="fc" id="L170">        return head.next.data;</span>
+    }
+
+    /**
+     * Returns the last element in this list.
+     *
+     * @return the last element in this list
+     * @throws NoSuchElementException if this list is empty
+     */
+    public T getLast() {
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (isEmpty()) throw new NoSuchElementException(&quot;List is empty&quot;);</span>
+<span class="fc" id="L181">        return tail.prev.data;</span>
+    }
+
+    /**
+     * Returns the element at the specified position in this list.
+     *
+     * @param index index of the element to return
+     * @return the element at the specified position in this list
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index &lt; 0 || index &gt;= size()})
+     */
+    public T getAt(int index) {
+<span class="fc" id="L193">        checkElementIndex(index);</span>
+<span class="fc" id="L194">        return nodeAt(index).data;</span>
+    }
+
+    // --------------- Basic queries ---------------
+
+    /**
+     * Returns the number of elements in this list.
+     *
+     * @return the number of elements in this list
+     */
+    @Override
+    public int size() {
+<span class="fc" id="L206">        return size;</span>
+    }
+
+    /**
+     * Returns {@code true} if this list contains no elements.
+     *
+     * @return {@code true} if this list contains no elements
+     */
+    @Override
+    public boolean isEmpty() {
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        return size == 0;</span>
+    }
+
+    /**
+     * Returns {@code true} if this list contains the specified element.
+     *
+     * @param data element whose presence in this list is to be tested
+     * @return {@code true} if this list contains the specified element
+     */
+    @Override
+    public boolean contains(T data) {
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        return indexOf(data) != -1;</span>
+    }
+
+    // --------------- Search ---------------
+
+    /**
+     * Returns the index of the first occurrence of the specified element
+     * in this list, or -1 if this list does not contain the element.
+     *
+     * @param data element to search for
+     * @return the index of the first occurrence of the specified element in
+     *         this list, or -1 if this list does not contain the element
+     */
+    @Override
+    public int indexOf(T data) {
+<span class="fc" id="L242">        int idx = 0;</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for (DoublyLinkedList.Node&lt;T&gt; x = head.next; x != tail; x = x.next) {</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            if (Objects.equals(data, x.data)) return idx;</span>
+<span class="fc" id="L245">            idx++;</span>
+        }
+<span class="fc" id="L247">        return -1;</span>
+    }
+
+    // --------------- Helpers ---------------
+
+    /**
+     * Links a new node containing the specified element between the given
+     * previous and next nodes. Updates the size and modification count.
+     *
+     * @param data the element to insert
+     * @param prev the node that will precede the new node
+     * @param next the node that will follow the new node
+     */
+    private void linkBetween(T data, DoublyLinkedList.Node&lt;T&gt; prev, DoublyLinkedList.Node&lt;T&gt; next) {
+<span class="fc" id="L261">        DoublyLinkedList.Node&lt;T&gt; n = new DoublyLinkedList.Node&lt;&gt;(data, prev, next);</span>
+<span class="fc" id="L262">        prev.next = n;</span>
+<span class="fc" id="L263">        next.prev = n;</span>
+<span class="fc" id="L264">        size++;</span>
+<span class="fc" id="L265">        modCount++;</span>
+<span class="fc" id="L266">    }</span>
+
+    /**
+     * Checks if the specified index is a valid position index (for add operations).
+     * A position index is valid if it is between 0 (inclusive) and size (inclusive).
+     *
+     * @param index the index to check
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    private void checkPositionIndex(int index) {
+<span class="pc bpc" id="L276" title="1 of 4 branches missed.">        if (index &lt; 0 || index &gt; size)</span>
+<span class="fc" id="L277">            throw new IndexOutOfBoundsException(&quot;Index: &quot; + index + &quot;, Size: &quot; + size);</span>
+<span class="fc" id="L278">    }</span>
+
+    /**
+     * Returns the node at the specified index. Optimizes traversal by starting
+     * from the nearest end (head or tail) based on the index position.
+     *
+     * @param index the index of the node to return (must be valid)
+     * @return the node at the specified index
+     */
+    private DoublyLinkedList.Node&lt;T&gt; nodeAt(int index) {
+        // index is assumed valid
+<span class="fc bfc" id="L289" title="All 2 branches covered.">        if (index &lt; (size &gt;&gt; 1)) {</span>
+<span class="fc" id="L290">            DoublyLinkedList.Node&lt;T&gt; x = head.next;</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">            for (int i = 0; i &lt; index; i++) x = x.next;</span>
+<span class="fc" id="L292">            return x;</span>
+        } else {
+<span class="fc" id="L294">            DoublyLinkedList.Node&lt;T&gt; x = tail.prev;</span>
+<span class="fc bfc" id="L295" title="All 2 branches covered.">            for (int i = size - 1; i &gt; index; i--) x = x.prev;</span>
+<span class="fc" id="L296">            return x;</span>
+        }
+    }
+
+    /**
+     * Unlinks the specified node from the list. Updates the size and modification
+     * count, and helps garbage collection by nulling out references.
+     *
+     * @param n the node to unlink
+     * @return the element that was stored in the unlinked node
+     */
+    private T unlink(DoublyLinkedList.Node&lt;T&gt; n) {
+<span class="fc" id="L308">        DoublyLinkedList.Node&lt;T&gt; prev = n.prev;</span>
+<span class="fc" id="L309">        DoublyLinkedList.Node&lt;T&gt; next = n.next;</span>
+<span class="fc" id="L310">        prev.next = next;</span>
+<span class="fc" id="L311">        next.prev = prev;</span>
+<span class="fc" id="L312">        T item = n.data;</span>
+        // Help GC
+<span class="fc" id="L314">        n.data = null;</span>
+<span class="fc" id="L315">        n.prev = null;</span>
+<span class="fc" id="L316">        n.next = null;</span>
+<span class="fc" id="L317">        size--;</span>
+<span class="fc" id="L318">        modCount++;</span>
+<span class="fc" id="L319">        return item;</span>
+    }
+
+    /**
+     * Checks if the specified index is a valid element index (for get/set/remove
+     * operations). An element index is valid if it is between 0 (inclusive) and
+     * size (exclusive).
+     *
+     * @param index the index to check
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    private void checkElementIndex(int index) {
+<span class="pc bpc" id="L331" title="1 of 4 branches missed.">        if (index &lt; 0 || index &gt;= size)</span>
+<span class="fc" id="L332">            throw new IndexOutOfBoundsException(&quot;Index: &quot; + index + &quot;, Size: &quot; + size);</span>
+<span class="fc" id="L333">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

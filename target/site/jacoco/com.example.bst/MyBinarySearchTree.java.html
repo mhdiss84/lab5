@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyBinarySearchTree.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab5-data-structures</a> &gt; <a href="index.source.html" class="el_package">com.example.bst</a> &gt; <span class="el_source">MyBinarySearchTree.java</span></div><h1>MyBinarySearchTree.java</h1><pre class="source lang-java linenums">package com.example.bst;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class MyBinarySearchTree&lt;T extends Comparable&lt;T&gt;&gt; implements BinarySearchTree&lt;T&gt;  {
+    private TreeNode&lt;T&gt; root;
+    private int size;
+
+<span class="fc" id="L10">    public MyBinarySearchTree() {</span>
+<span class="fc" id="L11">        this.root = null;</span>
+<span class="fc" id="L12">        this.size = 0;</span>
+<span class="fc" id="L13">    }</span>
+
+    @Override
+    public void insert(T data) {
+<span class="fc" id="L17">        root = insertRecursive(root, data);</span>
+<span class="fc" id="L18">    }</span>
+
+    private TreeNode&lt;T&gt; insertRecursive(TreeNode&lt;T&gt; node, T data) {
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (node == null) {</span>
+<span class="fc" id="L22">            size++;</span>
+<span class="fc" id="L23">            return new TreeNode&lt;&gt;(data);</span>
+        }
+
+<span class="fc" id="L26">        int cmp = data.compareTo(node.data);</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (cmp &lt; 0) {</span>
+<span class="fc" id="L28">            node.left = insertRecursive(node.left, data);</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        } else if (cmp &gt; 0) {</span>
+<span class="fc" id="L30">            node.right = insertRecursive(node.right, data);</span>
+        }
+<span class="fc" id="L32">         return node;</span>
+    }
+
+    @Override
+    public boolean contains(T data) {
+<span class="fc" id="L37">        return containsRecursive(root, data);</span>
+    }
+
+    private boolean containsRecursive(TreeNode&lt;T&gt; node, T data) {
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (node == null) {</span>
+<span class="fc" id="L43">            return false;</span>
+        }
+
+<span class="fc" id="L46">        int cmp = data.compareTo(node.data);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (cmp == 0) {</span>
+<span class="fc" id="L48">            return true;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        } else if (cmp &lt; 0) {</span>
+<span class="fc" id="L50">            return containsRecursive(node.left, data);</span>
+        } else {
+<span class="fc" id="L52">            return containsRecursive(node.right, data);</span>
+        }
+    }
+
+    @Override
+    public void delete(T data){
+<span class="fc" id="L58">        root = deleteRecursive(root, data);</span>
+<span class="fc" id="L59">    }</span>
+
+    private TreeNode&lt;T&gt; deleteRecursive(TreeNode&lt;T&gt; node, T data) {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (node == null) {</span>
+<span class="fc" id="L63">            return null;</span>
+        }
+
+<span class="fc" id="L66">        int cmp = data.compareTo(node.data);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (cmp &lt; 0) {</span>
+<span class="fc" id="L68">            node.left = deleteRecursive(node.left, data);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        } else if (cmp &gt; 0) {</span>
+<span class="fc" id="L70">            node.right = deleteRecursive(node.right, data);</span>
+        } else {
+<span class="fc" id="L72">            size--;</span>
+
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (node.left == null) {</span>
+<span class="fc" id="L75">                return node.right;</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">            } else if (node.right == null) {</span>
+<span class="nc" id="L77">                return node.left;</span>
+            }
+<span class="fc" id="L79">            node.data = findMin(node.right).data;</span>
+<span class="fc" id="L80">            node.right = deleteRecursive(node.right, node.data);</span>
+<span class="fc" id="L81">            size++;</span>
+        }
+
+<span class="fc" id="L84">        return node;</span>
+    }
+
+    // === Traversal Methods ===
+    @Override
+    public void inOrderTraversal() {
+<span class="fc" id="L90">        System.out.print(&quot;In-order: &quot;);</span>
+<span class="fc" id="L91">        inOrderRecursive(root);</span>
+<span class="fc" id="L92">        System.out.println();</span>
+<span class="fc" id="L93">    }</span>
+
+    private void inOrderRecursive(TreeNode&lt;T&gt; node) {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (node != null) {</span>
+<span class="fc" id="L97">            inOrderRecursive(node.left);</span>
+<span class="fc" id="L98">            System.out.print(node.data + &quot; &quot;);</span>
+<span class="fc" id="L99">            inOrderRecursive(node.right);</span>
+        }
+<span class="fc" id="L101">    }</span>
+
+    @Override
+    public void preOrderTraversal() {
+<span class="fc" id="L105">        System.out.print(&quot;Pre-order: &quot;);</span>
+<span class="fc" id="L106">        preOrderRecursive(root);</span>
+<span class="fc" id="L107">        System.out.println();</span>
+<span class="fc" id="L108">    }</span>
+
+    private void preOrderRecursive(TreeNode&lt;T&gt; node) {
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (node != null) {</span>
+<span class="fc" id="L112">            System.out.print(node.data + &quot; &quot;);</span>
+<span class="fc" id="L113">            preOrderRecursive(node.left);</span>
+<span class="fc" id="L114">            preOrderRecursive(node.right);</span>
+        }
+<span class="fc" id="L116">    }</span>
+
+    @Override
+    public void postOrderTraversal() {
+<span class="fc" id="L120">        System.out.print(&quot;Post-order: &quot;);</span>
+<span class="fc" id="L121">        postOrderRecursive(root);</span>
+<span class="fc" id="L122">        System.out.println();</span>
+<span class="fc" id="L123">    }</span>
+
+    private void postOrderRecursive(TreeNode&lt;T&gt; node) {
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if (node != null) {</span>
+<span class="fc" id="L127">            postOrderRecursive(node.left);</span>
+<span class="fc" id="L128">            postOrderRecursive(node.right);</span>
+<span class="fc" id="L129">            System.out.print(node.data + &quot; &quot;);</span>
+        }
+<span class="fc" id="L131">    }</span>
+
+    @Override
+    public void levelOrderTraversal() {
+<span class="fc" id="L135">        System.out.print(&quot;Level-order: &quot;);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (root == null) {</span>
+<span class="fc" id="L137">            System.out.println();</span>
+<span class="fc" id="L138">            return;</span>
+        }
+
+<span class="fc" id="L141">        Queue&lt;TreeNode&lt;T&gt;&gt; queue = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L142">        queue.offer(root);</span>
+
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        while (!queue.isEmpty()) {</span>
+<span class="fc" id="L145">            TreeNode&lt;T&gt; current = queue.poll();</span>
+<span class="fc" id="L146">            System.out.print(current.data + &quot; &quot;);</span>
+
+<span class="fc bfc" id="L148" title="All 2 branches covered.">            if (current.left != null) {</span>
+<span class="fc" id="L149">                queue.offer(current.left);</span>
+            }
+<span class="fc bfc" id="L151" title="All 2 branches covered.">            if (current.right != null) {</span>
+<span class="fc" id="L152">                queue.offer(current.right);</span>
+            }
+<span class="fc" id="L154">        }</span>
+<span class="fc" id="L155">        System.out.println();</span>
+<span class="fc" id="L156">    }</span>
+    
+    // === Tree Properties ===
+    @Override
+    public int height() {
+<span class="fc" id="L161">        return heightRecursive(root);</span>
+    }
+
+    private int heightRecursive(TreeNode&lt;T&gt; node) {
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (node == null) {</span>
+<span class="fc" id="L166">            return -1;</span>
+        }
+<span class="fc" id="L168">        return 1 + Math.max(heightRecursive(node.left), heightRecursive(node.right));</span>
+    }
+
+    @Override
+    public int size() {
+<span class="fc" id="L173">        return size;</span>
+    }
+
+    @Override
+    public boolean isEmpty() {
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        return size == 0;</span>
+    }
+
+    // === Additional Utility Methods ===
+
+    @Override
+    public T min() {
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (root == null) {</span>
+<span class="fc" id="L186">            throw new IllegalStateException(&quot;Tree is empty&quot;);</span>
+        }
+<span class="fc" id="L188">        return findMin(root).data;</span>
+    }
+
+    @Override
+    public T max() {
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (root == null) {</span>
+<span class="fc" id="L194">            throw new IllegalStateException(&quot;Tree is empty&quot;);</span>
+        }
+<span class="fc" id="L196">        return findMax(root).data;</span>
+    }
+
+    private TreeNode&lt;T&gt; findMin(TreeNode&lt;T&gt; node) {
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        while (node.left != null) {</span>
+<span class="fc" id="L201">            node = node.left;</span>
+        }
+<span class="fc" id="L203">        return node;</span>
+    }
+
+
+    private TreeNode&lt;T&gt; findMax(TreeNode&lt;T&gt; node) {
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        while (node.right != null) {</span>
+<span class="fc" id="L209">            node = node.right;</span>
+        }
+<span class="fc" id="L211">        return node;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L216">        StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L217">        sb.append(&quot;BST[&quot;);</span>
+<span class="fc" id="L218">        inOrderString(root, sb);</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if (sb.charAt(sb.length() - 1) == ' ') {</span>
+<span class="fc" id="L220">            sb.setLength(sb.length() - 1); // Remove trailing space</span>
+        }
+<span class="fc" id="L222">        sb.append(&quot;]&quot;);</span>
+<span class="fc" id="L223">        return sb.toString();</span>
+    }
+
+    private void inOrderString(TreeNode&lt;T&gt; node, StringBuilder sb) {
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        if (node != null) {</span>
+<span class="fc" id="L228">            inOrderString(node.left, sb);</span>
+<span class="fc" id="L229">            sb.append(node.data).append(&quot; &quot;);</span>
+<span class="fc" id="L230">            inOrderString(node.right, sb);</span>
+        }
+<span class="fc" id="L232">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

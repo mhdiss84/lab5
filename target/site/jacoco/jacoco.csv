@@ -1,0 +1,6 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+lab5-data-structures,com.example.dlist,DoublyLinkedList.Node,0,12,0,0,0,5,0,1,0,1
+lab5-data-structures,com.example.dlist,DoublyLinkedList,19,353,5,29,1,79,5,32,0,20
+lab5-data-structures,com.example.bst,TreeNode,0,12,0,0,0,5,0,1,0,1
+lab5-data-structures,com.example.bst,MyBinarySearchTree,3,433,2,50,1,114,2,48,0,24
+lab5-data-structures,com.example.main,Lab5Demo,3,0,0,0,1,0,1,0,1,0
