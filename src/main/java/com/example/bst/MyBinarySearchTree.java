@@ -3,10 +3,28 @@ package com.example.bst;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * Implementation of Binary Search Tree for Lab 5 Part 2.
+ *
+ * <p>Time Complexity:
+ * - Insertion: O(log n) average, O(n) worst-case (unbalanced tree)
+ * - Deletion: O(log n) average, O(n) worst-case
+ * - Search: O(log n) average, O(n) worst-case
+ * - Traversals: O(n) for all traversal types</p>
+ *
+ * <p>Space Complexity: O(n) for storing nodes, O(h) for recursive traversals
+ * where h is the height of the tree</p>
+ *
+ * @param <T> the type of elements maintained by this BST, must be Comparable
+ */
+
 public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearchTree<T>  {
     private TreeNode<T> root;
     private int size;
 
+    /**
+     * Constructs an empty Binary Search Tree.
+     */
     public MyBinarySearchTree() {
         this.root = null;
         this.size = 0;
@@ -17,6 +35,13 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         root = insertRecursive(root, data);
     }
 
+    /**
+     * Recursive helper method for insertion.
+     *
+     * @param node the current node in recursion
+     * @param data the data to insert
+     * @return the root of the modified subtree
+     */
     private TreeNode<T> insertRecursive(TreeNode<T> node, T data) {
         if (node == null) {
             size++;
@@ -37,6 +62,13 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         return containsRecursive(root, data);
     }
 
+    /**
+     * Recursive helper method for search.
+     *
+     * @param node the current node in recursion
+     * @param data the data to search for
+     * @return true if data is found, false otherwise
+     */
     private boolean containsRecursive(TreeNode<T> node, T data) {
 
         if (node == null) {
@@ -58,6 +90,14 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         root = deleteRecursive(root, data);
     }
 
+    /**
+     * Recursive helper method for deletion.
+     * Handles three cases: no children, one child, two children.
+     *
+     * @param node the current node in recursion
+     * @param data the data to delete
+     * @return the root of the modified subtree
+     */
     private TreeNode<T> deleteRecursive(TreeNode<T> node, T data) {
         if (node == null) {
             return null;
@@ -154,13 +194,20 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         }
         System.out.println();
     }
-    
+
     // === Tree Properties ===
     @Override
     public int height() {
         return heightRecursive(root);
     }
 
+    /**
+     * Recursive helper method for height calculation.
+     * Height of empty tree is -1, single node tree is 0.
+     *
+     * @param node the current node in recursion
+     * @return the height of the subtree
+     */
     private int heightRecursive(TreeNode<T> node) {
         if (node == null) {
             return -1;
@@ -196,6 +243,12 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         return findMax(root).data;
     }
 
+    /**
+     * Finds the node with minimum value in the given subtree.
+     *
+     * @param node the root of the subtree
+     * @return the node with minimum value
+     */
     private TreeNode<T> findMin(TreeNode<T> node) {
         while (node.left != null) {
             node = node.left;
@@ -203,7 +256,12 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         return node;
     }
 
-
+    /**
+     * Finds the node with maximum value in the given subtree.
+     *
+     * @param node the root of the subtree
+     * @return the node with maximum value
+     */
     private TreeNode<T> findMax(TreeNode<T> node) {
         while (node.right != null) {
             node = node.right;
@@ -211,6 +269,11 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         return node;
     }
 
+    /**
+     * Returns a string representation of the tree (in-order traversal).
+     *
+     * @return string representation of the tree
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -231,3 +294,4 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements BinarySearch
         }
     }
 }
+
